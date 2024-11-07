@@ -21,3 +21,13 @@ ancho :: Arbol a -> Int
 ancho ArbolVacio = 0
 ancho (Raiz _ ArbolVacio ArbolVacio) = 1
 ancho (Raiz _ izquierdo derecho) = ancho izquierdo + ancho derecho
+
+{-Ejercicio 4-}
+
+data TipoRecorrido = InOrder | PreOrder | PostOrder deriving Show
+
+recorrido :: Arbol a -> TipoRecorrido -> [a]
+recorrido ArbolVacio _ = []
+recorrido (Raiz a izquierdo derecho) InOrder = recorrido izquierdo InOrder ++ [a] ++ recorrido derecho InOrder
+recorrido (Raiz a izquierdo derecho) PreOrder = [a] ++ recorrido izquierdo PreOrder ++ recorrido derecho PreOrder
+recorrido (Raiz a izquierdo derecho) PostOrder = recorrido izquierdo PostOrder ++ recorrido derecho PostOrder ++ [a]
