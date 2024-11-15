@@ -50,3 +50,30 @@ combinarNiveles :: [[a]] -> [[a]] -> [[a]]
 combinarNiveles [] ys = ys
 combinarNiveles xs [] = xs
 combinarNiveles (x:xs) (y:ys) = (x ++ y) : combinarNiveles xs ys
+
+{-Ejercicio 6-}
+maximo :: Arbol a -> a
+maximo ArbolVacio = error "No hay elementos"
+maximo (Raiz a _ ArbolVacio) = a
+maximo (Raiz a _ derecho) = maximo derecho 
+
+{-Ejercicio 7-}
+minimo :: Arbol a -> a
+minimo ArbolVacio = error "No hay elementos"
+minimo (Raiz a ArbolVacio _) = a
+minimo (Raiz a _ izquierdo) = minimo izquierdo
+
+{-Ejercicio 8-}
+eliminar :: Ord a => Arbol a -> a -> Arbol a
+eliminar ArbolVacio elem = error "No existe el elemento en el arbol"
+eliminar (Raiz x ArbolVacio derecho) elem =  if x == elem
+                                                then derecho
+                                                else eliminar derecho elem
+eliminar (Raiz x izquierdo ArbolVacio) elem = if x == elem
+                                                then izquierdo
+                                                else eliminar izquierdo elem
+eleminar (Raiz x izquierdo derecho) elem = if elem < x
+                                                then(Raiz x(eliminar izquierdo elem) derecho)
+                                                else if elem > x
+                                                    then (Raiz x (eliminar derecho elem) izquierdo)
+                                                    else (Raiz (minimo derecho) izquierdo (eliminar derecho(minimo derecho)))
