@@ -1,79 +1,71 @@
-data Arbol a = ArbolVacio | Raiz a (Arbol a)(Arbol a) deriving Show
+
+data Arbol a = ArbolVacio | Raiz a (Arbol a) (Arbol a) deriving Show
 
 {-Ejercicio 1-}
 
 longitud :: Arbol a -> Int
-longitud ArbolVacio = 0
-longitud (Raiz _ izquierdo derecho) = 1 + longitud izquierdo + longitud derecho
+longitud ArbolVacio = 0 
+longitud (Raiz a arbi arbd) = 1 + longitud arbi + longitud arbd 
 
 {-Ejercicio 2-}
-
-profundidad :: Arbol a -> Int
+profundidad :: Arbol a-> Int
 profundidad ArbolVacio = 0
-profundidad (Raiz _ izquierdo derecho) =  if longitud derecho > longitud izquierdo 
-                                            then longitud derecho + 1
-                                            else longitud izquierdo + 1
-
+profundidad (Raiz a arbi arbd) = 1 + max(profundidad arbi) (profundidad arbd)
 
 {-Ejercicio 3-}
-
-ancho :: Arbol a -> Int
+ancho :: Arbol a-> Int
 ancho ArbolVacio = 0
-ancho (Raiz _ ArbolVacio ArbolVacio) = 1
-ancho (Raiz _ izquierdo derecho) = ancho izquierdo + ancho derecho
+ancho (Raiz a ArbolVacio ArbolVacio) = 1
+ancho (Raiz a arbi arbd) = ancho arbi + ancho arbd
 
 {-Ejercicio 4-}
-
-data TipoRecorrido = InOrder | PreOrder | PostOrder deriving Show
-
-recorrido :: Arbol a -> TipoRecorrido -> [a]
+data Recorrido = InOrder | PreOrder | PostOrder
+recorrido :: Arbol a -> Recorrido -> [a]
 recorrido ArbolVacio _ = []
-recorrido (Raiz a izquierdo derecho) InOrder = recorrido izquierdo InOrder 
-                                                ++ [a] 
-                                                ++ recorrido derecho InOrder
-recorrido (Raiz a izquierdo derecho) PreOrder = [a] 
-                                                ++ recorrido izquierdo PreOrder 
-                                                ++ recorrido derecho PreOrder
-recorrido (Raiz a izquierdo derecho) PostOrder = recorrido izquierdo PostOrder 
-                                                ++ recorrido derecho PostOrder 
-                                                ++ [a]
+recorrido (Raiz a arbi arbd) InOrder =  recorrido arbi InOrder ++ [a] ++ recorrido arbd InOrder
+recorrido (Raiz a arbi arbd) PreOrder = [a] ++ recorrido arbi PreOrder ++ recorrido arbd PreOrder
+recorrido (Raiz a arbi arbd) PostOrder =  recorrido arbi PostOrder ++ recorrido arbd PostOrder ++ [a]
 
 {-Ejercicio 5-}
 niveles :: Arbol a -> [[a]]
 niveles ArbolVacio = []
-niveles (Raiz a ArbolVacio ArbolVacio) = [[a]]
-niveles (Raiz a izquierdo derecho) = [a] 
-                                        : combinarNiveles (niveles izquierdo) 
-                                                         (niveles derecho)
+niveles (Raiz a ArbolVacio  ArbolVacio) = [[a]]
+niveles (Raiz a arbolIzquierdo  arbolDerecho) = [a] 
+                                                   : combinarNiveles(niveles arbolIzquierdo)
+                                                                   (niveles arbolDerecho)
 
+  {-Ejercicio 6-}                                                                        
 combinarNiveles :: [[a]] -> [[a]] -> [[a]]
 combinarNiveles [] ys = ys
 combinarNiveles xs [] = xs
-combinarNiveles (x:xs) (y:ys) = (x ++ y) : combinarNiveles xs ys
-
-{-Ejercicio 6-}
-maximo :: Arbol a -> a
-maximo ArbolVacio = error "No hay elementos"
-maximo (Raiz a _ ArbolVacio) = a
-maximo (Raiz a _ derecho) = maximo derecho 
+combinarNiveles (x:xs) (y:ys) = (x++y) : combinarNiveles xs ys
 
 {-Ejercicio 7-}
 minimo :: Arbol a -> a
-minimo ArbolVacio = error "No hay elementos"
-minimo (Raiz a ArbolVacio _) = a
-minimo (Raiz a _ izquierdo) = minimo izquierdo
+minimo ArbolVacio = error "Está vacío, no hay mínimos"
+minimo (Raiz a  ArbolVacio _) = a
+minimo (Raiz a _ arbolIzquierdo) = minimo arbolIzquierdo
+
 
 {-Ejercicio 8-}
+maximo :: Arbol a -> a
+maximo ArbolVacio = error "Está vacío, no hay maximos"
+maximo (Raiz a _  ArbolVacio) = a
+maximo (Raiz a _  arbolDerecho) = maximo arbolDerecho
+
+
+{-Ejercicio 9-}
 eliminar :: Ord a => Arbol a -> a -> Arbol a
-eliminar ArbolVacio elem = error "No existe el elemento en el arbol"
-eliminar (Raiz x ArbolVacio derecho) elem =  if x == elem
-                                                then derecho
-                                                else eliminar derecho elem
-eliminar (Raiz x izquierdo ArbolVacio) elem = if x == elem
-                                                then izquierdo
-                                                else eliminar izquierdo elem
-eleminar (Raiz x izquierdo derecho) elem = if elem < x
-                                                then(Raiz x(eliminar izquierdo elem) derecho)
-                                                else if elem > x
-                                                    then (Raiz x (eliminar derecho elem) izquierdo)
-                                                    else (Raiz (minimo derecho) izquierdo (eliminar derecho(minimo derecho)))
+eliminar ArbolVacio elemento = error "Está vacío"
+eliminar (Raiz x ArbolVacio arbolDerecho) elemento = if x == elemento
+                                                    then arbolDerecho
+                                                    else  eliminar arbolDerecho elemento
+eliminar (Raiz x arbolIzquierdo ArbolVacio) elemento = if x == elemento
+                                                       then arbolIzquierdo
+                                                       else  eliminar arbolIzquierdo elemento
+eliminar (Raiz x arbolIzquierdo arbolDerecho) elemento = if elemento < x
+                                                         then(Raiz x(eliminar arbolIzquierdo elemento) arbolDerecho)
+                                                          else if elemento > x
+                                                          then (Raiz x (eliminar arbolDerecho elemento) arbolIzquierdo)       
+                                                          else (Raiz (minimo arbolDerecho) arbolIzquierdo(eliminar arbolDerecho(minimo arbolDerecho)))
+                                                          
